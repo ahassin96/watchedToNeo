@@ -20,7 +20,7 @@ def create_watched_relation(tx, user_id, video_id):
         "WHERE u.user_id = $user_id AND v.video_id = $video_id "
         "MERGE (u)-[:WATCHED]->(v)"
     )
-    print(f"Executing query: {query}")
+    logging.debug(f"Executing query: {query}")
     tx.run(query, user_id=user_id, video_id=video_id)
 
 @app.route('/watched', methods=['POST'])
