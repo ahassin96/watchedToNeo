@@ -20,6 +20,7 @@ def create_watched_relation(tx, user_id, video_id):
         "WHERE u.user_id = $user_id AND v.video_id = $video_id "
         "MERGE (u)-[:WATCHED]->(v)"
     )
+    print(f"Executing query: {query}")
     tx.run(query, user_id=user_id, video_id=video_id)
 
 @app.route('/watched', methods=['POST'])
@@ -37,7 +38,7 @@ def watched_video():
         with GraphDatabase.driver(uri, auth=(username, password)) as driver:
             with driver.session() as session:
                 session.write_transaction(create_watched_relation, user_id, video_id)
-               
+
         response_data = {
             'success': True,
             'message': 'Watched video recorded successfully',
