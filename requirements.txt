@@ -12,3 +12,4 @@ itsdangerous==2.1.1
 pip==22.0.3
 pymongo==4.0.1
 Flask-RESTful==0.3.10
+logging==0.4.9.6
