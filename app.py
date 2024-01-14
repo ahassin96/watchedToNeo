@@ -14,33 +14,31 @@ username = os.getenv("NEO4J_USERNAME", "default_username")
 password = os.getenv("NEO4J_PASSWORD", "default_password")
 
 
-def create_watched_relation(tx, user_id, user_profile, video_id):
-    
+def create_watched_relation(tx, user_id, user_profile, video_id, tags):
     check_user_query = "MATCH (u:User {user_id: $user_id}) RETURN u"
     result = tx.run(check_user_query, user_id=user_id)
 
     if not result.single():
-
         create_user_query = "CREATE (u:User {user_id: $user_id, user_profile: $user_profile})"
         tx.run(create_user_query, user_id=user_id, user_profile=user_profile)
 
-
     create_watched_query = (
         "MATCH (u:User {user_id: $user_id}) "
-        "CREATE (v:Video {video_id: $video_id}) "
+        "CREATE (v:Video {video_id: $video_id, tags: $tags}) "
         "CREATE (u)-[:WATCHED]->(v)"
     )
 
-    tx.run(create_watched_query, user_id=user_id, video_id=video_id)
+    tx.run(create_watched_query, user_id=user_id, video_id=video_id, tags=tags)
 
 
 @app.route('/watched', methods=['POST'])
 def watched_video():
     try:
-        user_id, user_profile, video_id = (
+        user_id, user_profile, video_id, tags = (
             request.json.get('user_id'),
             request.json.get('user_profile'),
-            request.json.get('video_id')
+            request.json.get('video_id'),
+            request.json.get('tags', [])  # Default to an empty list if 'tags' is not present
         )
 
         if not all((user_id, user_profile, video_id)):
@@ -48,14 +46,15 @@ def watched_video():
 
         with GraphDatabase.driver(uri, auth=(username, password)) as driver:
             with driver.session() as session:
-                session.write_transaction(create_watched_relation, user_id, user_profile, video_id)
+                session.write_transaction(create_watched_relation, user_id, user_profile, video_id, tags)
 
         response_data = {
             'success': True,
             'message': 'Watched video recorded successfully',
             'user_id': user_id,
             'user_profile': user_profile,
-            'video_id': video_id
+            'video_id': video_id,
+            'tags': tags
         }
 
         return make_response(jsonify(response_data), 201)
