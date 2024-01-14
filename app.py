@@ -37,6 +37,7 @@ def watched_video():
         with GraphDatabase.driver(uri, auth=(username, password)) as driver:
             with driver.session() as session:
                 session.write_transaction(create_watched_relation, user_id, video_id)
+                session.commit()
 
         response_data = {
             'success': True,
