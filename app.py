@@ -5,9 +5,10 @@ from flask_cors import CORS
 import os
 
 load_dotenv()
-CORS(app)
+
 
 app = Flask(__name__)
+CORS(app)
 
 uri = os.getenv("NEO4J_URI", "bolt://ec2-54-88-88-30.compute-1.amazonaws.com:7687")
 username = os.getenv("NEO4J_USERNAME", "default_username")
