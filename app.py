@@ -13,14 +13,26 @@ uri = os.getenv("NEO4J_URI", "bolt://ec2-54-88-88-30.compute-1.amazonaws.com:768
 username = os.getenv("NEO4J_USERNAME", "default_username")
 password = os.getenv("NEO4J_PASSWORD", "default_password")
 
+
 def create_watched_relation(tx, user_id, user_profile, video_id):
-    query = (
-        "CREATE (u:User {user_id: $user_id, user_profile: $user_profile}) "
+    
+    check_user_query = "MATCH (u:User {user_id: $user_id}) RETURN u"
+    result = tx.run(check_user_query, user_id=user_id)
+
+    if not result.single():
+
+        create_user_query = "CREATE (u:User {user_id: $user_id, user_profile: $user_profile})"
+        tx.run(create_user_query, user_id=user_id, user_profile=user_profile)
+
+
+    create_watched_query = (
+        "MATCH (u:User {user_id: $user_id}) "
         "CREATE (v:Video {video_id: $video_id}) "
         "CREATE (u)-[:WATCHED]->(v)"
     )
 
-    tx.run(query, user_id=user_id, user_profile=user_profile, video_id=video_id)
+    tx.run(create_watched_query, user_id=user_id, video_id=video_id)
+
 
 @app.route('/watched', methods=['POST'])
 def watched_video():
