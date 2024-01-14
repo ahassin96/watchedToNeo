@@ -1,9 +1,11 @@
 from flask import Flask, request, jsonify, make_response
 from neo4j import GraphDatabase
 from dotenv import load_dotenv
+from flask_cors import CORS
 import os
 
 load_dotenv()
+CORS(app)
 
 app = Flask(__name__)
 
