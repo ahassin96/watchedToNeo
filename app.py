@@ -55,7 +55,8 @@ def watched_video():
             'user_id': user_id,
             'user_profile': user_profile,
             'video_id': video_id,
-            'video_tags': video_tags
+            'video_tags': video_tags,
+            'video_url': video_url
         }
 
         return make_response(jsonify(response_data), 201)
