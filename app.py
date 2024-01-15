@@ -12,7 +12,7 @@ CORS(app)
 uri = os.getenv("NEO4J_URI", "bolt://ec2-54-88-88-30.compute-1.amazonaws.com:7687")
 username = os.getenv("NEO4J_USERNAME", "default_username")
 password = os.getenv("NEO4J_PASSWORD", "default_password")
-
+print("hello")
 
 def create_watched_relation(tx, user_id, user_profile, video_id, video_tags):
     check_user_query = "MATCH (u:User {user_id: $user_id}) RETURN u"
