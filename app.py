@@ -3,6 +3,7 @@ from neo4j import GraphDatabase
 from dotenv import load_dotenv
 from flask_cors import CORS
 import os
+import json
 
 load_dotenv()
 
@@ -38,11 +39,13 @@ def watched_video():
             request.json.get('user_id'),
             request.json.get('user_profile'),
             request.json.get('video_id'),
-            request.json.get('tags', [])  # Default to an empty list if 'tags' is not present
+            request.json.get('tags', [])
         )
 
         if not all((user_id, user_profile, video_id)):
             return make_response(jsonify({'success': False, 'error': 'Missing required parameters'}), 400)
+
+        tags = json.loads(tags)
 
         with GraphDatabase.driver(uri, auth=(username, password)) as driver:
             with driver.session() as session:
