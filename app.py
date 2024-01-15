@@ -34,7 +34,7 @@ def create_watched_relation(tx, user_id, user_profile, video_id, video_tags, vid
 def watched_video():
 
     try:
-        user_id, user_profile, video_id, video_tags = (
+        user_id, user_profile, video_id, video_tags, video_url = (
             request.json.get('user_id'),
             request.json.get('user_profile'),
             request.json.get('video_id'),
@@ -42,7 +42,7 @@ def watched_video():
             request.json.get('video_url', '')
         )
 
-        if not all((user_id, user_profile, video_id)):
+        if not all((user_id, user_profile, video_id, video_url)):
             return make_response(jsonify({'success': False, 'error': 'Missing required parameters'}), 400)
 
         with GraphDatabase.driver(uri, auth=(username, password)) as driver:
